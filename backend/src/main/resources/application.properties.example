@@ -1,0 +1,73 @@
+# ==============================================================================
+# DevPilot Backend Configuration Example
+# Copy this file to 'application.properties' in the same folder and fill in secrets
+# ==============================================================================
+
+spring.application.name=backend
+server.port=8080
+
+# ------------------------------------------------------------------------------
+# PostgreSQL & Data Source Settings (via Docker Compose on port 5433)
+# ------------------------------------------------------------------------------
+spring.datasource.url=jdbc:postgresql://localhost:5433/devpilot
+spring.datasource.username=postgres
+spring.datasource.password=postgres
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# ------------------------------------------------------------------------------
+# Session & Cookie Configuration
+# ------------------------------------------------------------------------------
+server.servlet.session.cookie.name=DEVPILOT_SESSION
+server.servlet.session.cookie.http-only=true
+server.servlet.session.cookie.same-site=lax
+server.servlet.session.cookie.path=/
+server.servlet.session.timeout=7d
+
+# ------------------------------------------------------------------------------
+# Application & Frontend URLs
+# ------------------------------------------------------------------------------
+app.frontend-url=http://localhost:3000
+app.cors.allowed-origins=http://localhost:3000
+
+# Token Encryption (used for encrypting stored GitHub OAuth tokens in DB)
+# Note: Salt must be a valid hex-encoded string (e.g., 16 or 32 hexadecimal characters)
+app.token-encryptor-password=your-super-secret-encryption-password-here
+app.token-encryptor-salt=a1b2c3d4e5f67890
+
+# ------------------------------------------------------------------------------
+# GitHub OAuth2 Client Credentials
+# Create an OAuth App at: https://github.com/settings/developers
+# Homepage URL: http://localhost:3000
+# Authorization callback URL: http://localhost:8080/login/oauth2/code/github
+# ------------------------------------------------------------------------------
+spring.security.oauth2.client.registration.github.client-id=YOUR_GITHUB_CLIENT_ID
+spring.security.oauth2.client.registration.github.client-secret=YOUR_GITHUB_CLIENT_SECRET
+spring.security.oauth2.client.registration.github.scope=read:user,repo
+spring.security.oauth2.client.registration.github.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+
+# ------------------------------------------------------------------------------
+# OpenAI & Spring AI Configuration
+# ------------------------------------------------------------------------------
+spring.ai.openai.api-key=YOUR_OPENAI_API_KEY
+spring.ai.openai.chat.options.model=gpt-4o-mini
+spring.ai.openai.embedding.options.model=text-embedding-3-small
+
+# ------------------------------------------------------------------------------
+# pgvector Vector Store Settings
+# ------------------------------------------------------------------------------
+spring.ai.vectorstore.pgvector.initialize-schema=true
+spring.ai.vectorstore.pgvector.dimensions=1536
+spring.ai.vectorstore.pgvector.distance-type=COSINE_DISTANCE
+spring.ai.vectorstore.pgvector.index-type=HNSW
+
+# ------------------------------------------------------------------------------
+# Indexing & Rate Limiting Settings
+# ------------------------------------------------------------------------------
+app.indexing.chunk-size=800
+app.indexing.max-file-bytes=102400
+app.github.api-delay-ms=50
